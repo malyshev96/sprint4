@@ -2,10 +2,10 @@ package spentcalories
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
-	"log"
 )
 
 // Основные константы, необходимые для расчетов.
@@ -23,7 +23,7 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 	// Проверяем правильность разделения
 	if len(sepData) != 3 {
-		return 0, 0, fmt.Errorf("Не удалось обработать данные")
+		return 0, "0", 0, fmt.Errorf("Не удалось обработать данные")
 	}
 
 	// Преобразуем количество шагов в число
@@ -76,25 +76,15 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 	case "ходьба":
 		dist := distance(steps, height)
 		speed := meanSpeed(steps, height, duration)
-		cal,_ := WalkingSpentCalories(steps, weight, height, duration)
-		return fmt.Sprintf("Тип тренировки: %s\n
-					Длительность: %.2f ч.\n
-					Дистанция: %.2f км.\n
-					Скорость: %.2f км/ч\n
-					Сожгли калорий: %.2f\n",
-				training, duration.Hours, dist, speed, cal), nil
+		cal, _ := WalkingSpentCalories(steps, weight, height, duration)
+		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", training, duration.Hours(), dist, speed, cal), nil
 	case "бег":
 		dist := distance(steps, height)
 		speed := meanSpeed(steps, height, duration)
-		cal,_ := RunningSpentCalories(steps, weight, height, duration)
-		return fmt.Sprintf("Тип тренировки: %s\n
-					Длительность: %.2f ч.\n
-					Дистанция: %.2f км.\n
-					Скорость: %.2f км/ч\n
-					Сожгли калорий: %.2f\n",
-				training, duration.Hours, dist, speed, cal), nil
+		cal, _ := RunningSpentCalories(steps, weight, height, duration)
+		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", training, duration.Hours(), dist, speed, cal), nil
 	default:
-		return "неизвестный тип тренировки", nil	
+		return "неизвестный тип тренировки", nil
 	}
 
 }
@@ -106,7 +96,7 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 	}
 
 	//Расчет калорий
-	cal := (meanSpeed(steps, height, duration) * weight * duration.Minutes) / float64(minInH)
+	cal := (meanSpeed(steps, height, duration) * weight * duration.Minutes()) / float64(minInH)
 
 	return cal, nil
 }
@@ -118,7 +108,7 @@ func WalkingSpentCalories(steps int, weight, height float64, duration time.Durat
 	}
 
 	//Расчет калорий
-	cal := (meanSpeed(steps, height, duration) * weight * duration.Minutes) / float64(minInH) * walkingCaloriesCoefficient
+	cal := (meanSpeed(steps, height, duration) * weight * duration.Minutes()) / float64(minInH) * walkingCaloriesCoefficient
 
 	return cal, nil
 }
