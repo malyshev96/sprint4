@@ -1,6 +1,10 @@
 package spentcalories
 
 import (
+	"fmt"
+	"time"
+	"strings"
+	"strconv"
 	"time"
 )
 
@@ -14,7 +18,27 @@ const (
 )
 
 func parseTraining(data string) (int, string, time.Duration, error) {
-	// TODO: реализовать функцию
+	// Разделяем строку
+	sepData := strings.Split(data, ",")
+
+	// Проверяем правильность разделения
+	if len(sepData) != 3 {
+		return 0, 0, fmt.Errorf("Не удалось обработать данные")
+	}
+
+	// Преобразуем количество шагов в число
+	stepsCount, errSteps := strconv.Atoi(sepData[0])
+	if errSteps != nil {
+		return 0, "0", 0, fmt.Errorf("Ошибка преобразования числа шагов: %s. Текст ошибки: %s", sepData[0], errSteps)
+	}
+
+	//Парсинг времени
+	time, errTime := time.ParseDuration(sepData[2])
+	if errTime != nil {
+		return 0, "0", 0, fmt.Errorf("Ошибка преобразования времени ходьбы: %s. Текст ошибки: %s", sepData[1], errTime)
+	}
+
+	return stepsCount, sepData[1], time, nil
 }
 
 func distance(steps int, height float64) float64 {
