@@ -32,15 +32,15 @@ func parsePackage(data string) (int, time.Duration, error) {
 		return 0, 0, fmt.Errorf("Ошибка преобразования числа шагов: %s. Текст ошибки: %s", sepData[0], errSteps)
 	}
 
-	//Проверка шагов на ноль
-	if stepsCount <= 0 {
-		return 0, 0, fmt.Errorf("Количество шагов - 0")
-	}
-
 	//Парсинг времени
 	duration, errTime := time.ParseDuration(sepData[1])
 	if errTime != nil {
 		return 0, 0, fmt.Errorf("Ошибка преобразования времени ходьбы: %s. Текст ошибки: %s", sepData[1], errTime)
+	}
+
+	//Проверка на положительность
+	if stepsCount <= 0 || duration <= 0 {
+		return 0, 0, fmt.Errorf("Данные не положительные")
 	}
 
 	return stepsCount, duration, nil

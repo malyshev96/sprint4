@@ -39,8 +39,7 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	}
 
 	if stepsCount <= 0 || time <= 0 {
-		log.Println("Не положительные данные")
-		return 0, "0", 0, nil
+		return 0, "0", 0, fmt.Errorf("Не положительные данные")
 	}
 
 	return stepsCount, sepData[1], time, nil
