@@ -2,6 +2,7 @@ package daysteps
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -32,7 +33,7 @@ func parsePackage(data string) (int, time.Duration, error) {
 	}
 
 	//Проверка шагов на ноль
-	if stepsCount == 0 {
+	if stepsCount <= 0 {
 		return 0, 0, fmt.Errorf("Количество шагов - 0")
 	}
 
@@ -49,12 +50,13 @@ func DayActionInfo(data string, weight, height float64) string {
 	//Получаем данные из parsePackage
 	stepsCount, duration, errParse := parsePackage(data)
 	if errParse != nil {
-		fmt.Println(errParse)
+		log.Println(errParse)
 		return ""
 	}
 
-	//Проверка шагов на ноль
-	if stepsCount == 0 {
+	//Проверка на ноль
+	if stepsCount <= 0 || duration <= 0 || weight <= 0 || height <= 0 {
+		log.Println("Не положительные данные")
 		return ""
 	}
 

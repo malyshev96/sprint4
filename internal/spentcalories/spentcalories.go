@@ -35,7 +35,12 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	//Парсинг времени
 	time, errTime := time.ParseDuration(sepData[2])
 	if errTime != nil {
-		return 0, "0", 0, fmt.Errorf("Ошибка преобразования времени ходьбы: %s. Текст ошибки: %s", sepData[1], errTime)
+		return 0, "0", 0, fmt.Errorf("Ошибка преобразования времени ходьбы: %s. Текст ошибки: %s", sepData[2], errTime)
+	}
+
+	if stepsCount <= 0 || time <= 0 {
+		log.Println("Не положительные данные")
+		return 0, "0", 0, nil
 	}
 
 	return stepsCount, sepData[1], time, nil
@@ -72,19 +77,19 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 	}
 
 	//Формирование информации по типу тренировки
-	switch strings.ToLower(training) {
-	case "ходьба":
+	switch training {
+	case "Ходьба":
 		dist := distance(steps, height)
 		speed := meanSpeed(steps, height, duration)
 		cal, _ := WalkingSpentCalories(steps, weight, height, duration)
 		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", training, duration.Hours(), dist, speed, cal), nil
-	case "бег":
+	case "Бег":
 		dist := distance(steps, height)
 		speed := meanSpeed(steps, height, duration)
 		cal, _ := RunningSpentCalories(steps, weight, height, duration)
 		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", training, duration.Hours(), dist, speed, cal), nil
 	default:
-		return "неизвестный тип тренировки", nil
+		return "", fmt.Errorf("неизвестный тип тренировки")
 	}
 
 }
